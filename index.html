@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yaş Hesaplayıcı</title>
+    <title>Doğum Günü Hesaplayıcı</title>
     <style>
         * {
             margin: 0;
@@ -13,515 +13,512 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500, #ff6b6b, #ffa500);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .main-container {
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* EKRAN 1: DOĞUM TARİHİ GİRİŞİ */
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px;
         }
 
-        .input-section {
-            background: rgba(255, 255, 255, 0.1);
+        .birth-screen {
+            transform: translateX(0);
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
-            padding: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
 
-        .timeline-section {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            min-height: 60vh;
+        .birth-screen.slide-out {
+            transform: translateX(-100%);
         }
 
-        .input-title {
-            color: white;
-            font-size: 1.5em;
-            font-weight: 700;
-            margin-bottom: 20px;
+        .birth-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(30px);
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
             text-align: center;
+            width: 100%;
+            max-width: 350px;
+            transform: scale(0.95);
+            animation: floatIn 0.8s ease-out forwards;
         }
 
-        .input-group {
-            margin-bottom: 15px;
+        @keyframes floatIn {
+            to {
+                transform: scale(1);
+            }
         }
 
-        .input-label {
-            display: block;
-            margin-bottom: 8px;
-            color: white;
-            font-weight: 600;
+        .birth-title {
+            font-size: 2.2em;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .birth-subtitle {
+            color: #666;
             font-size: 1em;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .date-container {
+            position: relative;
+            margin-bottom: 30px;
         }
 
         .date-input {
             width: 100%;
-            padding: 15px 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            padding: 20px 25px;
+            border: 3px solid transparent;
+            border-radius: 20px;
+            font-size: 18px;
+            background: linear-gradient(white, white) padding-box,
+                        linear-gradient(45deg, #ff6b6b, #ffa500) border-box;
+            color: #333;
             transition: all 0.3s ease;
             outline: none;
-            backdrop-filter: blur(10px);
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+            text-align: center;
+            font-weight: 600;
         }
 
         .date-input:focus {
-            border-color: white;
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.2);
         }
 
-        .date-input::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-            cursor: pointer;
-        }
-
-        .calculate-btn {
+        .start-btn {
             width: 100%;
-            padding: 15px;
-            background: white;
-            color: #667eea;
+            padding: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            color: white;
             border: none;
-            border-radius: 25px;
-            font-size: 1.1em;
+            border-radius: 20px;
+            font-size: 1.3em;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 15px;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        .calculate-btn:hover, .calculate-btn:active {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        .start-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
         }
 
-        .stats-container {
+        .start-btn:hover::before {
+            left: 100%;
+        }
+
+        .start-btn:active {
+            transform: scale(0.98);
+        }
+
+        .error {
+            color: #ff4757;
+            font-size: 0.9em;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(255, 71, 87, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #ff4757;
+        }
+
+        /* EKRAN 2: SONUÇLAR VE SEKMELER */
+        .results-screen {
+            transform: translateX(100%);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(15px);
+            flex-direction: column;
+            padding: 0;
+        }
+
+        .results-screen.slide-in {
+            transform: translateX(0);
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(30px);
+            padding: 15px 20px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:active {
+            transform: scale(0.9);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .header-title {
+            color: white;
+            font-size: 1.3em;
+            font-weight: 700;
+            text-align: center;
+            flex: 1;
+        }
+
+        .tabs {
+            display: flex;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 15px;
-            backdrop-filter: blur(10px);
+            margin: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .tab {
+            flex: 1;
+            padding: 18px 10px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            text-align: center;
+        }
+
+        .tab.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+        }
+
+        .tab-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* İSTATİSTİKLER SEKMESI */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        .stat-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px 8px;
-            border-radius: 12px;
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px 15px;
             text-align: center;
-            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:active {
+            transform: scale(0.95);
         }
 
         .stat-number {
-            font-size: 1.2em;
-            font-weight: 700;
-            margin-bottom: 4px;
-            word-break: break-all;
+            font-size: 2em;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
         .stat-label {
-            font-size: 0.8em;
-            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9em;
+            font-weight: 600;
             line-height: 1.2;
         }
 
-        .birthday-countdown {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px;
+        .birthday-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(25px);
+            border-radius: 25px;
+            padding: 30px 20px;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-top: 10px;
+        }
+
+        .birthday-number {
+            font-size: 3.5em;
+            font-weight: 900;
             color: white;
+            margin-bottom: 10px;
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
         }
 
-        .countdown-number {
-            font-size: 1.8em;
-            font-weight: 700;
-            margin-bottom: 4px;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
-        .countdown-label {
-            font-size: 0.9em;
-            opacity: 0.9;
+        .birthday-label {
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 5px;
         }
 
-        .timeline-title {
-            color: #333;
-            font-size: 1.8em;
-            font-weight: 700;
-            margin-bottom: 20px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-align: center;
+        .birthday-emoji {
+            font-size: 2em;
+            animation: bounce 1.5s infinite;
         }
 
-        .timeline-scroll {
-            max-height: 70vh;
-            overflow-y: auto;
-            padding-right: 5px;
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
+        /* ZAMAN ÇİZELGESİ SEKMESI */
         .timeline-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            margin: 8px 0;
-            background: linear-gradient(135deg, #f8f9ff 0%, #e8ecff 100%);
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
-            animation: slideInLeft 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
         }
 
-        .timeline-item:hover, .timeline-item:active {
-            transform: translateX(3px);
-            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+        .timeline-item:active::before {
+            transform: translateX(100%);
+        }
+
+        .timeline-item:active {
+            transform: scale(0.98);
+        }
+
+        .timeline-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
         }
 
         .timeline-year {
-            font-size: 1.1em;
-            font-weight: 700;
-            color: #667eea;
-            min-width: 50px;
-            flex-shrink: 0;
-        }
-
-        .timeline-age {
-            flex: 1;
-            font-size: 0.95em;
-            color: #333;
-            font-weight: 500;
-            margin: 0 10px;
-            line-height: 1.3;
+            font-size: 1.4em;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .timeline-days {
-            font-size: 0.8em;
-            color: #666;
-            background: rgba(102, 126, 234, 0.1);
-            padding: 3px 6px;
-            border-radius: 6px;
-            min-width: 60px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .current-year {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-left: 4px solid #fff;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            transform: scale(1.02);
-        }
-
-        .current-year .timeline-year,
-        .current-year .timeline-age {
-            color: white;
-        }
-
-        .current-year .timeline-days {
             background: rgba(255, 255, 255, 0.2);
             color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
         }
 
-        .future-year {
-            opacity: 0.7;
-            border-left-color: #95a5f7;
-        }
-
-        .past-year {
-            border-left-color: #a855f7;
-        }
-
-        .milestone {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            color: white;
-            border-left: 4px solid #fff;
-        }
-
-        .milestone .timeline-year,
-        .milestone .timeline-age {
-            color: white;
-        }
-
-        .milestone .timeline-days {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 50vh;
-            color: #999;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .empty-icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-
-        .empty-text {
-            font-size: 1.1em;
+        .timeline-age {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1em;
             font-weight: 500;
             line-height: 1.4;
         }
 
-        .error {
-            color: #ff6b6b;
-            font-size: 0.9em;
-            margin-top: 10px;
-            text-align: center;
-            background: rgba(255, 107, 107, 0.1);
-            padding: 8px 12px;
-            border-radius: 8px;
+        .current-year {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+            border-left-color: white;
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .milestone {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 165, 0, 0.2));
+            border-left-color: #ffd700;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2);
+        }
+
+        .future-year {
+            opacity: 0.7;
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
 
-        .timeline-scroll::-webkit-scrollbar {
-            width: 4px;
+        /* Scrollbar özelleştirme */
+        .tab-content::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .timeline-scroll::-webkit-scrollbar-track {
-            background: rgba(102, 126, 234, 0.1);
+        .tab-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
         }
 
-        .timeline-scroll::-webkit-scrollbar-thumb {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+        .tab-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
             border-radius: 10px;
         }
 
-        /* Tablet için orta boyut ayarlamaları */
+        /* Tablet ve masaüstü için gizleme */
         @media (min-width: 768px) {
-            .main-container {
-                flex-direction: row;
-                height: 100vh;
+            .screen {
+                max-width: 400px;
+                margin: 0 auto;
+                border-radius: 30px;
                 overflow: hidden;
-            }
-
-            .input-section {
-                width: 350px;
-                position: static;
-                border-right: 1px solid rgba(255, 255, 255, 0.2);
-                border-bottom: none;
-                padding: 30px;
-            }
-
-            .timeline-section {
-                flex: 1;
-                padding: 30px;
-                overflow: hidden;
-            }
-
-            .input-title {
-                font-size: 1.8em;
-                margin-bottom: 25px;
-            }
-
-            .timeline-title {
-                font-size: 2.2em;
-                text-align: left;
-            }
-
-            .timeline-scroll {
-                height: calc(100vh - 120px);
-                max-height: none;
-            }
-
-            .stats-grid {
-                margin-bottom: 20px;
-            }
-
-            .timeline-item {
-                padding: 15px 20px;
-            }
-
-            .timeline-year {
-                font-size: 1.3em;
-                min-width: 65px;
-            }
-
-            .timeline-age {
-                font-size: 1em;
-                margin: 0 15px;
-            }
-
-            .timeline-days {
-                font-size: 0.85em;
-                padding: 4px 8px;
-                min-width: 75px;
-            }
-        }
-
-        /* Büyük ekranlar için */
-        @media (min-width: 1024px) {
-            .input-section {
-                width: 400px;
-                padding: 40px;
-            }
-
-            .input-title {
-                font-size: 2em;
-            }
-
-            .timeline-title {
-                font-size: 2.5em;
-            }
-        }
-
-        /* Çok küçük ekranlar için */
-        @media (max-width: 360px) {
-            .timeline-year {
-                min-width: 45px;
-                font-size: 1em;
-            }
-
-            .timeline-age {
-                font-size: 0.9em;
-            }
-
-            .timeline-days {
-                font-size: 0.75em;
-                min-width: 55px;
-            }
-
-            .stats-grid {
-                gap: 8px;
-            }
-
-            .stat-item {
-                padding: 10px 6px;
-            }
-        }
-
-        /* Touch cihazlar için özel ayarlar */
-        @media (hover: none) and (pointer: coarse) {
-            .timeline-item:hover {
-                transform: none;
-            }
-
-            .calculate-btn:hover {
-                transform: none;
-            }
-
-            .timeline-item:active {
-                transform: translateX(3px);
-                box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
-            }
-
-            .calculate-btn:active {
-                transform: translateY(-1px);
+                height: 80vh;
+                top: 10vh;
             }
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="input-section">
-            <h2 class="input-title">🎂 Yaş Hesaplayıcı</h2>
+    <!-- EKRAN 1: DOĞUM TARİHİ GİRİŞİ -->
+    <div class="screen birth-screen" id="birthScreen">
+        <div class="birth-card">
+            <h1 class="birth-title">🎂</h1>
+            <h2 class="birth-title">Doğum Günü<br>Hesaplayıcı</h2>
+            <p class="birth-subtitle">Yaşınızı ve önemli dönüm noktalarınızı keşfedin</p>
             
-            <div class="input-group">
-                <label class="input-label" for="birthDate">📅 Doğum Tarihiniz</label>
+            <div class="date-container">
                 <input type="date" id="birthDate" class="date-input">
             </div>
             
-            <button class="calculate-btn" onclick="calculateAge()">Hesapla</button>
+            <button class="start-btn" onclick="startCalculation()">
+                🚀 Keşfet
+            </button>
             
             <div id="error" class="error hidden"></div>
+        </div>
+    </div>
+
+    <!-- EKRAN 2: SONUÇLAR -->
+    <div class="screen results-screen" id="resultsScreen">
+        <div class="header">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <h2 class="header-title">Yaş Analiziniz</h2>
+            <div style="width: 45px;"></div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('stats')">📊 İstatistikler</button>
+            <button class="tab" onclick="showTab('timeline')">📅 Zaman Çizelgesi</button>
+        </div>
+
+        <!-- İSTATİSTİKLER SEKMESI -->
+        <div class="tab-content active" id="statsTab">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="currentAge">-</div>
+                    <div class="stat-label">Yaşınız</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalDays">-</div>
+                    <div class="stat-label">Yaşanan Gün</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalWeeks">-</div>
+                    <div class="stat-label">Yaşanan Hafta</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalMonths">-</div>
+                    <div class="stat-label">Yaşanan Ay</div>
+                </div>
+            </div>
             
-            <div id="statsContainer" class="stats-container hidden">
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-number" id="currentAge">-</div>
-                        <div class="stat-label">Şu Anki Yaş</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="totalDays">-</div>
-                        <div class="stat-label">Yaşanan Gün</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="totalWeeks">-</div>
-                        <div class="stat-label">Yaşanan Hafta</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="totalMonths">-</div>
-                        <div class="stat-label">Yaşanan Ay</div>
-                    </div>
-                </div>
-                
-                <div id="birthdayCountdown" class="birthday-countdown">
-                    <div class="countdown-number" id="daysUntilBirthday">-</div>
-                    <div class="countdown-label">Doğum Gününe Kalan Gün</div>
-                </div>
+            <div class="birthday-card">
+                <div class="birthday-number" id="daysUntilBirthday">-</div>
+                <div class="birthday-label">Doğum Gününe Kalan Gün</div>
+                <div class="birthday-emoji">🎉</div>
             </div>
         </div>
 
-        <div class="timeline-section">
-            <div id="emptyState" class="empty-state">
-                <div class="empty-icon">📅</div>
-                <div class="empty-text">Doğum tarihinizi girerek başlayın</div>
-            </div>
-            
-            <div id="timelineContent" class="hidden">
-                <h2 class="timeline-title">📈 Yaş Zaman Çizelgeniz</h2>
-                <div class="timeline-scroll" id="timeline"></div>
-            </div>
+        <!-- ZAMAN ÇİZELGESİ SEKMESI -->
+        <div class="tab-content" id="timelineTab">
+            <div id="timeline"></div>
         </div>
     </div>
 
     <script>
-        function calculateAge() {
+        let currentBirthDate = null;
+
+        function startCalculation() {
             const birthDateInput = document.getElementById('birthDate');
             const errorDiv = document.getElementById('error');
-            const emptyState = document.getElementById('emptyState');
-            const timelineContent = document.getElementById('timelineContent');
-            const timeline = document.getElementById('timeline');
-            const statsContainer = document.getElementById('statsContainer');
             
             errorDiv.classList.add('hidden');
             
             if (!birthDateInput.value) {
-                errorDiv.textContent = 'Lütfen doğum tarihinizi girin!';
+                errorDiv.textContent = '❗ Lütfen doğum tarihinizi seçin';
                 errorDiv.classList.remove('hidden');
                 return;
             }
@@ -532,10 +529,21 @@
             const birthYear = birthDate.getFullYear();
             
             if (birthYear > currentYear || birthYear < 1900) {
-                errorDiv.textContent = 'Lütfen geçerli bir doğum tarihi girin!';
+                errorDiv.textContent = '❗ Geçerli bir doğum tarihi girin';
                 errorDiv.classList.remove('hidden');
                 return;
             }
+            
+            currentBirthDate = birthDate;
+            calculateAndShow();
+            switchToResults();
+        }
+
+        function calculateAndShow() {
+            const birthDate = currentBirthDate;
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            const birthYear = birthDate.getFullYear();
             
             // İstatistikleri hesapla
             const currentAge = Math.floor((today - birthDate) / (365.25 * 24 * 60 * 60 * 1000));
@@ -552,20 +560,24 @@
             
             // İstatistikleri göster
             document.getElementById('currentAge').textContent = currentAge;
-            document.getElementById('totalDays').textContent = totalDays.toLocaleString('tr-TR');
-            document.getElementById('totalWeeks').textContent = totalWeeks.toLocaleString('tr-TR');
-            document.getElementById('totalMonths').textContent = totalMonths.toLocaleString('tr-TR');
+            document.getElementById('totalDays').textContent = formatNumber(totalDays);
+            document.getElementById('totalWeeks').textContent = formatNumber(totalWeeks);
+            document.getElementById('totalMonths').textContent = formatNumber(totalMonths);
             document.getElementById('daysUntilBirthday').textContent = daysUntilBirthday;
             
             // Timeline oluştur
+            createTimeline(birthYear, currentYear, currentAge, today);
+        }
+
+        function createTimeline(birthYear, currentYear, currentAge, today) {
+            const timeline = document.getElementById('timeline');
             timeline.innerHTML = '';
             
-            for (let year = birthYear; year <= currentYear + 10; year++) {
+            for (let year = birthYear; year <= currentYear + 15; year++) {
                 const age = year - birthYear;
                 const timelineItem = document.createElement('div');
                 timelineItem.className = 'timeline-item';
                 
-                // Yaş kategorileri ve özellikler
                 let ageInfo = '';
                 let className = '';
                 let daysLived = '';
@@ -573,9 +585,7 @@
                 if (year < currentYear) {
                     ageInfo = `${age} yaşındaydınız`;
                     className = 'past-year';
-                    const yearEnd = new Date(year, 11, 31);
-                    const daysInYear = Math.floor((yearEnd - new Date(year - 1, 11, 31)) / (24 * 60 * 60 * 1000));
-                    daysLived = `${daysInYear} gün`;
+                    daysLived = '365 gün';
                 } else if (year === currentYear) {
                     ageInfo = `${currentAge} yaşındasınız`;
                     className = 'current-year';
@@ -589,56 +599,62 @@
                 
                 // Özel milestone'lar
                 let milestone = '';
-                if (age === 18) { milestone = ' 🎓 Reşit'; className = 'milestone'; }
-                else if (age === 21) { milestone = ' 🥂 21 Yaş'; className = 'milestone'; }
-                else if (age === 25) { milestone = ' 🌟 Çeyrek Asır'; className = 'milestone'; }
-                else if (age === 30) { milestone = ' 🚀 Otuzlu Yaşlar'; className = 'milestone'; }
-                else if (age === 40) { milestone = ' 💼 Kırklı Yaşlar'; className = 'milestone'; }
-                else if (age === 50) { milestone = ' 🏆 Yarım Asır'; className = 'milestone'; }
-                else if (age === 65) { milestone = ' 🌅 Emeklilik Yaşı'; className = 'milestone'; }
-                else if (age === 75) { milestone = ' 🌸 75. Yaş'; className = 'milestone'; }
+                if (age === 18) { milestone = ' 🎓 Reşit olma'; className = 'milestone'; }
+                else if (age === 21) { milestone = ' 🥂 21. yaş'; className = 'milestone'; }
+                else if (age === 25) { milestone = ' ✨ Çeyrek asır'; className = 'milestone'; }
+                else if (age === 30) { milestone = ' 🚀 Otuzlu yaşlar'; className = 'milestone'; }
+                else if (age === 40) { milestone = ' 💼 Kırklı yaşlar'; className = 'milestone'; }
+                else if (age === 50) { milestone = ' 🏆 Yarım asır'; className = 'milestone'; }
+                else if (age === 65) { milestone = ' 🌅 Emeklilik'; className = 'milestone'; }
                 else if (age === 100) { milestone = ' 🎉 Asırlık!'; className = 'milestone'; }
-                else if (age % 10 === 0 && age > 0) { milestone = ` 🎂 ${age}. Yaş`; }
+                else if (age % 10 === 0 && age > 0) { milestone = ` 🎂 ${age}. yaş`; }
                 
                 timelineItem.className += ' ' + className;
                 timelineItem.innerHTML = `
-                    <div class="timeline-year">${year}</div>
+                    <div class="timeline-top">
+                        <div class="timeline-year">${year}</div>
+                        <div class="timeline-days">${daysLived}</div>
+                    </div>
                     <div class="timeline-age">${ageInfo}${milestone}</div>
-                    <div class="timeline-days">${daysLived}</div>
                 `;
                 
                 timeline.appendChild(timelineItem);
             }
-            
-            // UI güncellemeleri
-            emptyState.classList.add('hidden');
-            timelineContent.classList.remove('hidden');
-            statsContainer.classList.remove('hidden');
-            
-            // Şu anki yıla scroll
-            setTimeout(() => {
-                const currentYearElement = document.querySelector('.current-year');
-                if (currentYearElement) {
-                    currentYearElement.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
-                    });
-                }
-            }, 300);
         }
+
+        function switchToResults() {
+            document.getElementById('birthScreen').classList.add('slide-out');
+            document.getElementById('resultsScreen').classList.add('slide-in');
+        }
+
+        function goBack() {
+            document.getElementById('birthScreen').classList.remove('slide-out');
+            document.getElementById('resultsScreen').classList.remove('slide-in');
+        }
+
+        function showTab(tabName) {
+            // Tab butonlarını güncelle
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Tab içeriklerini güncelle
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        function formatNumber(num) {
+            return num.toLocaleString('tr-TR');
+        }
+
+        // Bugünün tarihini max değer olarak ayarla
+        document.getElementById('birthDate').max = new Date().toISOString().split('T')[0];
         
         // Enter tuşu ile hesaplama
         document.getElementById('birthDate').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                calculateAge();
+                startCalculation();
             }
         });
-        
-        // Bugünün tarihini max değer olarak ayarla
-        document.getElementById('birthDate').max = new Date().toISOString().split('T')[0];
-        
-        // Otomatik hesaplama (tarih değiştiğinde)
-        document.getElementById('birthDate').addEventListener('change', calculateAge);
     </script>
 </body>
 </html>
